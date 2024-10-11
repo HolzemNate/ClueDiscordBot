@@ -1,5 +1,3 @@
-import { capitalize } from './utils.js';
-
 export function getResult(Suspect, Weapon, Room) {
   let gameResult;
   if (Suspect == ChosenSuspect && Weapon == ChosenWeapon && Room == ChosenRoom) {

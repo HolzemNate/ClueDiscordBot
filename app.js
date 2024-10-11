@@ -146,18 +146,26 @@ app.post('/interactions', verifyKeyMiddleware(process.env.PUBLIC_KEY), async fun
           {
             method: 'POST',
             body:{
-              content: `Your cards are: ${thisPlayer.cards.toString()}`
+              content: `Your cards are:\n ${thisPlayer.cards.join("\n")}`
             }
           });
         }
 
       // Send a message into the channel where command was triggered from with the public cards
-      console.log(publicCards)
+      if (publicCards.length == 0) {
+        return res.send({
+          type: InteractionResponseType.CHANNEL_MESSAGE_WITH_SOURCE,
+          data: {
+            // Fetches a random emoji to send from a helper function
+            content: `Cards have been dealt! There are no publically known cards.`,
+          },
+        });
+      }
       return res.send({
         type: InteractionResponseType.CHANNEL_MESSAGE_WITH_SOURCE,
         data: {
           // Fetches a random emoji to send from a helper function
-          content: `The publically known cards are: ${publicCards.toString()}`,
+          content: `Cards have been dealt! The publically known cards are: \n ${publicCards.join("\n")}`,
         },
       });
     }
