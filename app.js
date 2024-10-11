@@ -11,7 +11,7 @@ import {
   joinGame,
   leaveGame,
   dealCards,
-  JOINABLE
+  GAME_STATE
 } from './Clue.js'
 
 // Create an express app
@@ -55,22 +55,35 @@ app.post('/interactions', verifyKeyMiddleware(process.env.PUBLIC_KEY), async fun
 
     // "start" command
     if (name === 'start') {
-      // Make game joinable and reset variables
-      startGame();
-      // Send a message into the channel where command was triggered from
-      return res.send({
-        type: InteractionResponseType.CHANNEL_MESSAGE_WITH_SOURCE,
-        data: {
-          // Fetches a random emoji to send from a helper function
-          content: `A game of clue has begun! Type /join to join the game!`,
-        },
-      });
+      if(GAME_STATE == 0) {
+        startGame();
+        return res.send({
+          type: InteractionResponseType.CHANNEL_MESSAGE_WITH_SOURCE,
+          data: {
+            content: `A game of clue has begun! Type /join to join the game!`,
+          },
+        });
+      } else if (GAME_STATE == 1) {
+        return res.send({
+          type: InteractionResponseType.CHANNEL_MESSAGE_WITH_SOURCE,
+          data: {
+            content: `A game of clue is already in progress! Type /join to join the game!`,
+          },
+        });
+      } else if (GAME_STATE == 2) {
+        return res.send({
+          type: InteractionResponseType.CHANNEL_MESSAGE_WITH_SOURCE,
+          data: {
+            content: `A game of clue is already in progress! Please wait for the game to finish or end with /end!`,
+          },
+        });
+      }
     }
 
     // "join" command
     if (name === 'join') {
       // Check if there is a joinable game
-      if( JOINABLE ) {
+      if( GAME_STATE == 1 ) {
         joinGame(member.user);
         return res.send({
           type: InteractionResponseType.CHANNEL_MESSAGE_WITH_SOURCE,
@@ -92,7 +105,7 @@ app.post('/interactions', verifyKeyMiddleware(process.env.PUBLIC_KEY), async fun
     // "leave" command
     if (name === 'leave') {
       // Check if there is a joinable game
-      if( JOINABLE ) {
+      if( GAME_STATE == 1 ) {
         // Find out if player successfully left game
         let playerLeft = leaveGame(member.user);
 

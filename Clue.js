@@ -20,7 +20,7 @@ let ChosenRoom;
 let ChosenSuspect;
 let ChosenWeapon;
 
-export let JOINABLE = false;
+export let GAME_STATE = 0;
 let playerList = [];
 
 // Used to populate the guess command choices
@@ -88,7 +88,7 @@ export function getPlayerCards(){
 
 // Invoked on usage of the "start" command
 export function startGame() {
-  JOINABLE = true;
+  GAME_STATE = 1;
   playerList = [];
 }
 
@@ -119,7 +119,22 @@ export function leaveGame(user) {
 // Invoked on usage of the "deal" command
 export function dealCards() {
   // Stop new players from joining
-  JOINABLE = false;
+  GAME_STATE = 2;
+
+  // Deal Cards Code
+  getCardChoices();
+
+  let publicCards = getPlayerCards();
+
+  // Return playerList
+  return [playerList, publicCards];
+
+}
+
+// Invoked on usage of the "end" command
+export function endGame() {
+  // Stop new players from joining
+  GAME_STATE = 0;
 
   // Deal Cards Code
   getCardChoices();
