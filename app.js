@@ -7,17 +7,21 @@ import {
   verifyKeyMiddleware,
 } from 'discord-interactions';
 import {
+  getResult,
   startGame,
   joinGame,
   leaveGame,
   dealCards,
   GAME_STATE
 } from './Clue.js'
+import { channelLink } from 'discord.js';
 
 // Create an express app
 const app = express();
 // Get port, or default to 3000
 const PORT = process.env.PORT || 3000;
+// Globally scope the start-from channel as destination public channel
+let PUBLIC_CHANNEL;
 
 /**
  * Interactions endpoint URL where Discord will send HTTP requests
@@ -25,7 +29,7 @@ const PORT = process.env.PORT || 3000;
  */
 app.post('/interactions', verifyKeyMiddleware(process.env.PUBLIC_KEY), async function (req, res) {
   // Interaction type and data
-  const { type, member, data } = req.body;
+  const { type, member, user, channel_id ,data } = req.body;
 
   /**
    * Handle verification requests
@@ -42,7 +46,7 @@ app.post('/interactions', verifyKeyMiddleware(process.env.PUBLIC_KEY), async fun
     const { name } = data;
 
     // "test" command
-    if (name === 'test') {
+    if (name === "test") {
       // Send a message into the channel where command was triggered from
       return res.send({
         type: InteractionResponseType.CHANNEL_MESSAGE_WITH_SOURCE,
@@ -54,9 +58,10 @@ app.post('/interactions', verifyKeyMiddleware(process.env.PUBLIC_KEY), async fun
     }
 
     // "start" command
-    if (name === 'start') {
-      if(GAME_STATE == 0) {
+    if (name === "start") {
+      if (GAME_STATE == 0) {
         startGame();
+        PUBLIC_CHANNEL = channel_id;
         return res.send({
           type: InteractionResponseType.CHANNEL_MESSAGE_WITH_SOURCE,
           data: {
@@ -81,9 +86,9 @@ app.post('/interactions', verifyKeyMiddleware(process.env.PUBLIC_KEY), async fun
     }
 
     // "join" command
-    if (name === 'join') {
+    if (name === "join") {
       // Check if there is a joinable game
-      if( GAME_STATE == 1 ) {
+      if (GAME_STATE == 1) {
         joinGame(member.user);
         return res.send({
           type: InteractionResponseType.CHANNEL_MESSAGE_WITH_SOURCE,
@@ -97,34 +102,34 @@ app.post('/interactions', verifyKeyMiddleware(process.env.PUBLIC_KEY), async fun
           type: InteractionResponseType.CHANNEL_MESSAGE_WITH_SOURCE,
           data: {
             content: `There is no joinable game!`,
-        },
-      });
+          },
+        });
       }
     }
 
     // "leave" command
-    if (name === 'leave') {
+    if (name === "leave") {
       // Check if there is a joinable game
-      if( GAME_STATE == 1 ) {
+      if (GAME_STATE == 1) {
         // Find out if player successfully left game
         let playerLeft = leaveGame(member.user);
 
         if (playerLeft) {
           // Notify that player left
           return res.send({
-          type: InteractionResponseType.CHANNEL_MESSAGE_WITH_SOURCE,
-          data: {
-            content: `${member.user.username} left the game!`,
+            type: InteractionResponseType.CHANNEL_MESSAGE_WITH_SOURCE,
+            data: {
+              content: `${member.user.username} left the game!`,
             },
           });
         } else {
-            // Player was already not in the game
-            return res.send({
+          // Player was already not in the game
+          return res.send({
             type: InteractionResponseType.CHANNEL_MESSAGE_WITH_SOURCE,
             data: {
               content: `${member.user.username} is already not in the game!`,
-              },
-            });
+            },
+          });
         }
       } else {
         // Send a message into the channel where command was triggered from to notify there is no game
@@ -138,31 +143,36 @@ app.post('/interactions', verifyKeyMiddleware(process.env.PUBLIC_KEY), async fun
     }
 
     // "deal" command
-    if (name === 'deal') {
+    if (name === "deal") {
       // Get card assignments and player list
-      let [ activePlayers, publicCards ] = dealCards();
+      let [activePlayers, publicCards] = dealCards();
 
       // Loop through player list to send cards
-      for (let playerIndex = 0; playerIndex < activePlayers.length; playerIndex++) {
+      for (
+        let playerIndex = 0;
+        playerIndex < activePlayers.length;
+        playerIndex++
+      ) {
         let thisPlayer = activePlayers[playerIndex];
-          let channelResponse = await DiscordRequest("/users/@me/channels", 
+        let channelResponse = await DiscordRequest("/users/@me/channels", {
+          method: "POST",
+          body: {
+            recipient_id: thisPlayer.id,
+          },
+        });
+        let dmChannel = await channelResponse.json();
+        console.log(dmChannel);
+        console.log("/channels/" + dmChannel.id + "/messages");
+        let message = DiscordRequest(
+          "/channels/" + dmChannel.id + "/messages",
           {
-            method: 'POST',
-            body:{
-              recipient_id: thisPlayer.id
-            }
-          })
-          let dmChannel = await channelResponse.json();
-          console.log(dmChannel);
-          console.log('/channels/' + dmChannel.id + '/messages');
-          let message = DiscordRequest('/channels/' + dmChannel.id + '/messages', 
-          {
-            method: 'POST',
-            body:{
-              content: `Your cards are:\n ${thisPlayer.cards.join("\n")}`
-            }
-          });
-        }
+            method: "POST",
+            body: {
+              content: `Your cards are:\n ${thisPlayer.cards.join("\n")}`,
+            },
+          }
+        );
+      }
 
       // Send a message into the channel where command was triggered from with the public cards
       if (publicCards.length == 0) {
@@ -178,13 +188,58 @@ app.post('/interactions', verifyKeyMiddleware(process.env.PUBLIC_KEY), async fun
         type: InteractionResponseType.CHANNEL_MESSAGE_WITH_SOURCE,
         data: {
           // Fetches a random emoji to send from a helper function
-          content: `Cards have been dealt! The publically known cards are: \n ${publicCards.join("\n")}`,
+          content: `Cards have been dealt! The publically known cards are: \n ${publicCards.join(
+            "\n"
+          )}`,
         },
       });
     }
 
+    // "guess" command
+    if (name === "guess") {
+      let guessResult = getResult(data.options.killer, data.options.weapon, data.options.room);
+      if (guessResult) {
+        // Send message to public channel
+        let message = DiscordRequest(
+          "/channels/" + PUBLIC_CHANNEL + "/messages",
+          {
+            method: "POST",
+            body: {
+              content: `Player ${user.username} has guessed correctly!`,
+            },
+          }
+        );
+
+        return res.send({
+          type: InteractionResponseType.CHANNEL_MESSAGE_WITH_SOURCE,
+          data: {
+            content: `Congratulations! You guessed correctly!`,
+          },
+        });
+      } else {
+        // Send message to public channel
+        let message = DiscordRequest(
+          "/channels/" + PUBLIC_CHANNEL + "/messages",
+          {
+            method: "POST",
+            body: {
+              content: `Player ${user.username} has guessed incorrectly!`,
+            },
+          }
+        );
+
+        return res.send({
+          type: InteractionResponseType.CHANNEL_MESSAGE_WITH_SOURCE,
+          data: {
+            content: `Oh no! You guessed incorrectly!`,
+          },
+        });
+      }
+      
+    }
+
     console.error(`unknown command: ${name}`);
-    return res.status(400).json({ error: 'unknown command' });
+    return res.status(400).json({ error: "unknown command" });
   }
 
   console.error('unknown interaction type', type);

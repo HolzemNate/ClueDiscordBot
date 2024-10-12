@@ -2,11 +2,11 @@ export function getResult(Suspect, Weapon, Room) {
   let gameResult;
   if (Suspect == ChosenSuspect && Weapon == ChosenWeapon && Room == ChosenRoom) {
     //win
-    gameResult = 'You Win'
+    gameResult = true;
   } 
   else {
     // lose
-    gameResult = 'wrong answer dumbass'
+    gameResult = false;
   }
 
   return gameResult;
