@@ -12,7 +12,8 @@ import {
   joinGame,
   leaveGame,
   dealCards,
-  GAME_STATE
+  GAME_STATE,
+  endGame
 } from './Clue.js'
 import { channelLink } from 'discord.js';
 
@@ -197,7 +198,11 @@ app.post('/interactions', verifyKeyMiddleware(process.env.PUBLIC_KEY), async fun
 
     // "guess" command
     if (name === "guess") {
-      let guessResult = getResult(data.options.killer, data.options.weapon, data.options.room);
+      let guessResult = getResult(
+        data.options.killer,
+        data.options.weapon,
+        data.options.room
+      );
       if (guessResult) {
         // Send message to public channel
         let message = DiscordRequest(
@@ -235,7 +240,29 @@ app.post('/interactions', verifyKeyMiddleware(process.env.PUBLIC_KEY), async fun
           },
         });
       }
-      
+    }
+
+    // "end" command
+    if (name === "end") {
+      // Verify game is endable:
+      if (GAME_STATE != 0) {
+        endGame();
+        return res.send({
+          type: InteractionResponseType.CHANNEL_MESSAGE_WITH_SOURCE,
+          data: {
+            // Fetches a random emoji to send from a helper function
+            content: `The game has been ended!`,
+          },
+        });
+      } else {
+        return res.send({
+          type: InteractionResponseType.CHANNEL_MESSAGE_WITH_SOURCE,
+          data: {
+            // Fetches a random emoji to send from a helper function
+            content: `There is no game to end!`,
+          },
+        });
+      }
     }
 
     console.error(`unknown command: ${name}`);
