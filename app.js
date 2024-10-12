@@ -43,7 +43,7 @@ app.post('/interactions', verifyKeyMiddleware(process.env.PUBLIC_KEY), async fun
    * Handle slash command requests
    * See https://discord.com/developers/docs/interactions/application-commands#slash-commands
    */
-  if (type === InteractionType.APPLICATION_COMMAND) {
+  if (type === InteractionType.APPLICATION_COMMAND || type === InteractionType.APPLICATION_COMMAND_AUTOCOMPLETE ) {
     const { name } = data;
 
     // "test" command
