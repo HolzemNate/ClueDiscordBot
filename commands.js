@@ -1,6 +1,6 @@
 import 'dotenv/config';
 import { getOptions } from './Clue.js';
-import { capitalize, InstallGlobalCommands } from './utils.js';
+import { InstallGlobalCommands } from './utils.js';
 
 
 // Get the game choices from game.js
