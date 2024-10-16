@@ -57,12 +57,12 @@ export function getCardChoices() {
 
 export function getPlayerCards(){
   let numPlayers = playerList.length;
-
+  let min = 0;
   let AllCards = [];
   AllCards = AllCards.concat(Suspects);
   AllCards = AllCards.concat(Rooms);
   AllCards = AllCards.concat(Weapons);
-  
+  let max = AllCards.length;
   AllCards.splice(AllCards.indexOf(ChosenRoom),1);
   AllCards.splice(AllCards.indexOf(ChosenSuspect), 1);
   AllCards.splice(AllCards.indexOf(ChosenWeapon), 1);
@@ -70,20 +70,21 @@ export function getPlayerCards(){
   let NumExtraCards = AllCards.length % numPlayers;
   let ExtraCards = [];
   for (let index = 0; index < NumExtraCards; index++) {
+    max = AllCards.length;
     i = Math.floor(Math.random() * (max - min + 1) + min);
     ExtraCards[index] = AllCards[i];
     AllCards.splice(i,1);
   }
-  let min = 0;
   let numCards = AllCards.length / playerList.length;
   for (let index = 0; index < playerList.length; index++) {
     let player = playerList[index];
     player.cards = [];
-    while (player.cards.length <= numCards) {
+    while (player.cards.length < numCards) {
       let max = AllCards.length;
       let i = Math.floor(Math.random() * (max - min + 1) + min);
       // Append card string to player object and removes it from AllCards
       player.cards.push(AllCards.splice(i,1)[0])
+      console.log(`Adding ${player.cards[player.cards.length - 1]} to player ${player.username}'s deck`)
     }
   }
   return ExtraCards;
