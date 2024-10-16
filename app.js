@@ -196,6 +196,11 @@ app.post('/interactions', verifyKeyMiddleware(process.env.PUBLIC_KEY), async fun
 
     // "guess" command
     if (name === "guess") {
+      if(user) {
+        let guessPlayer = user;
+      } else {
+        let guessPlayer = member.user;
+      }
       console.log(
         `Guessing ${data.options[0].value}, ${data.options[1].value},${data.options[2].value}`
       );
@@ -211,7 +216,7 @@ app.post('/interactions', verifyKeyMiddleware(process.env.PUBLIC_KEY), async fun
           {
             method: "POST",
             body: {
-              content: `Player ${user.username} has guessed correctly!`,
+              content: `Player ${guessPlayer.username} has guessed correctly!`,
             },
           }
         );
@@ -229,7 +234,7 @@ app.post('/interactions', verifyKeyMiddleware(process.env.PUBLIC_KEY), async fun
           {
             method: "POST",
             body: {
-              content: `Player ${user.username} has guessed incorrectly!`,
+              content: `Player ${guessPlayer.username} has guessed incorrectly!`,
             },
           }
         );
