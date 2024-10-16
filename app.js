@@ -226,6 +226,7 @@ app.post('/interactions', verifyKeyMiddleware(process.env.PUBLIC_KEY), async fun
           type: InteractionResponseType.CHANNEL_MESSAGE_WITH_SOURCE,
           data: {
             content: `Congratulations! You guessed correctly!`,
+            flags: 64,
           },
         });
       } else {
@@ -244,6 +245,7 @@ app.post('/interactions', verifyKeyMiddleware(process.env.PUBLIC_KEY), async fun
           type: InteractionResponseType.CHANNEL_MESSAGE_WITH_SOURCE,
           data: {
             content: `Oh no! You guessed incorrectly!`,
+            flags: 64,
           },
         });
       }
