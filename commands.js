@@ -90,8 +90,8 @@ const GUESS_COMMAND = {
     },
   ],
   type: 1,
-  integration_types: [1],
-  contexts: [1],
+  integration_types: [0,1],
+  contexts: [0,1],
 };
 
 // Ends the game, announcing the answer and reseting the bot

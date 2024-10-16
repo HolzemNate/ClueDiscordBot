@@ -196,15 +196,13 @@ app.post('/interactions', verifyKeyMiddleware(process.env.PUBLIC_KEY), async fun
 
     // "guess" command
     if (name === "guess") {
-      console.log(data);
-      console.log(data.options);
       console.log(
-        `Guessing ${data.options.killer}, ${data.options.weapon},${data.options.room}`
+        `Guessing ${data.options[0].value}, ${data.options[1].value},${data.options[2].value}`
       );
       let guessResult = getResult(
-        data.options.killer,
-        data.options.weapon,
-        data.options.room
+        data.options[0].value,
+        data.options[1].value,
+        data.options[2].value
       );
       if (guessResult) {
         // Send message to public channel
