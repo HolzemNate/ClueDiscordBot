@@ -141,12 +141,4 @@ export function endGame() {
   // Stop new players from joining
   GAME_STATE = 0;
 
-  // Deal Cards Code
-  getCardChoices();
-
-  let publicCards = getPlayerCards();
-
-  // Return playerList
-  return [playerList, publicCards];
-
 }
