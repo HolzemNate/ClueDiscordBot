@@ -53,6 +53,8 @@ export function getCardChoices() {
   i = Math.floor(Math.random() * (max - min) + min);
   ChosenSuspect = Suspects[i];
 
+  // Debug print the answer
+  console.log(`The answer is ${ChosenSuspect}, ${ChosenWeapon}, ${ChosenRoom}`)
 }
 
 export function getPlayerCards(){
@@ -84,7 +86,6 @@ export function getPlayerCards(){
       let i = Math.floor(Math.random() * (max - min) + min);
       // Append card string to player object and removes it from AllCards
       player.cards.push(AllCards.splice(i,1)[0])
-      console.log(`Adding ${player.cards[player.cards.length - 1]} to player ${player.username}'s deck`)
     }
   }
   return ExtraCards;
