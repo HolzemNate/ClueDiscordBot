@@ -30,7 +30,7 @@ let PUBLIC_CHANNEL;
  */
 app.post('/interactions', verifyKeyMiddleware(process.env.PUBLIC_KEY), async function (req, res) {
   // Interaction type and data
-  const { type, member, user, channel_id ,data } = req.body;
+  const { type, member, user, channel_id, data } = req.body;
 
   /**
    * Handle verification requests
@@ -196,6 +196,8 @@ app.post('/interactions', verifyKeyMiddleware(process.env.PUBLIC_KEY), async fun
 
     // "guess" command
     if (name === "guess") {
+      console.log(data);
+      console.log(data.options);
       console.log(
         `Guessing ${data.options.killer}, ${data.options.weapon},${data.options.room}`
       );
