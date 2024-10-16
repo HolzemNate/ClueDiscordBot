@@ -59,9 +59,9 @@ export function getPlayerCards(){
   let numPlayers = playerList.length;
 
   let AllCards = [];
-  AllCards.concat(Suspects);
-  AllCards.concat(Rooms);
-  AllCards.concat(Weapons);
+  AllCards = AllCards.concat(Suspects);
+  AllCards = AllCards.concat(Rooms);
+  AllCards = AllCards.concat(Weapons);
   
   AllCards.splice(AllCards.indexOf(ChosenRoom),1);
   AllCards.splice(AllCards.indexOf(ChosenSuspect), 1);
