@@ -53,8 +53,6 @@ export function getCardChoices() {
   i = Math.floor(Math.random() * (max - min) + min);
   ChosenSuspect = Suspects[i];
 
-  // Debug print the answer
-  console.log(`The answer is ${ChosenSuspect}, ${ChosenWeapon}, ${ChosenRoom}`)
 }
 
 export function getPlayerCards(){
@@ -140,5 +138,5 @@ export function dealCards() {
 export function endGame() {
   // Stop new players from joining
   GAME_STATE = 0;
-
+  return [ChosenSuspect, ChosenWeapon, ChosenRoom]
 }

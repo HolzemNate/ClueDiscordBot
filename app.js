@@ -167,7 +167,7 @@ app.post('/interactions', verifyKeyMiddleware(process.env.PUBLIC_KEY), async fun
           {
             method: "POST",
             body: {
-              content: `Your cards are:\n ${thisPlayer.cards.join("\n")}`,
+              content: `Your cards are:\n${thisPlayer.cards.join("\n")}`,
             },
           }
         );
@@ -255,12 +255,12 @@ app.post('/interactions', verifyKeyMiddleware(process.env.PUBLIC_KEY), async fun
     if (name === "end") {
       // Verify game is endable:
       if (GAME_STATE != 0) {
-        endGame();
+        let [ ansSuspect, ansWeapon, ansRoom ] = endGame();
         return res.send({
           type: InteractionResponseType.CHANNEL_MESSAGE_WITH_SOURCE,
           data: {
             // Fetches a random emoji to send from a helper function
-            content: `The game has been ended!`,
+            content: `The game has been ended! \nThe Answer was ${ansSuspect} with the ${ansWeapon} in the ${ansRoom}!`,
           },
         });
       } else {
