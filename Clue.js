@@ -58,7 +58,10 @@ export function getCardChoices() {
 export function getPlayerCards(){
   let numPlayers = playerList.length;
 
-  let AllCards = [...Suspects,...Rooms,...Weapons];
+  let AllCards = [];
+  AllCards.concat(Suspects);
+  AllCards.concat(Rooms);
+  AllCards.concat(Weapons);
   
   AllCards.splice(AllCards.indexOf(ChosenRoom),1);
   AllCards.splice(AllCards.indexOf(ChosenSuspect), 1);
