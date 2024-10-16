@@ -196,6 +196,9 @@ app.post('/interactions', verifyKeyMiddleware(process.env.PUBLIC_KEY), async fun
 
     // "guess" command
     if (name === "guess") {
+      console.log(
+        `Guessing ${data.options.killer}, ${data.options.weapon},${data.options.room}`
+      );
       let guessResult = getResult(
         data.options.killer,
         data.options.weapon,
