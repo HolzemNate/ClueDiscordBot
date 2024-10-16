@@ -67,7 +67,7 @@ export function getPlayerCards(){
   AllCards.splice(AllCards.indexOf(ChosenSuspect), 1);
   AllCards.splice(AllCards.indexOf(ChosenWeapon), 1);
 
-  let NumExtraCards = AllCards%numPlayers;
+  let NumExtraCards = AllCards.length % numPlayers;
   let ExtraCards = [];
   for (let index = 0; index < NumExtraCards; index++) {
     i = Math.floor(Math.random() * (max - min + 1) + min);
@@ -83,7 +83,7 @@ export function getPlayerCards(){
       let max = AllCards.length;
       let i = Math.floor(Math.random() * (max - min + 1) + min);
       // Append card string to player object and removes it from AllCards
-      player.cards.push(AllCards.splice(i,1))
+      player.cards.push(AllCards.splice(i,1)[0])
     }
   }
   return ExtraCards;
