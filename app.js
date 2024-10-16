@@ -161,6 +161,7 @@ app.post('/interactions', verifyKeyMiddleware(process.env.PUBLIC_KEY), async fun
             recipient_id: thisPlayer.id,
           },
         });
+        console.log(thisPla.cards);
         let dmChannel = await channelResponse.json();
         let message = DiscordRequest(
           "/channels/" + dmChannel.id + "/messages",
