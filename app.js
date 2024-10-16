@@ -196,10 +196,11 @@ app.post('/interactions', verifyKeyMiddleware(process.env.PUBLIC_KEY), async fun
 
     // "guess" command
     if (name === "guess") {
+      let guessPlayer;
       if(user) {
-        let guessPlayer = user;
+        guessPlayer = user;
       } else {
-        let guessPlayer = member.user;
+        guessPlayer = member.user;
       }
       console.log(
         `Guessing ${data.options[0].value}, ${data.options[1].value},${data.options[2].value}`
