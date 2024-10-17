@@ -71,7 +71,7 @@ export function getPlayerCards(){
   let ExtraCards = [];
   for (let index = 0; index < NumExtraCards; index++) {
     max = AllCards.length;
-    i = Math.floor(Math.random() * (max - min) + min);
+    let i = Math.floor(Math.random() * (max - min) + min);
     ExtraCards[index] = AllCards[i];
     AllCards.splice(i,1);
   }
