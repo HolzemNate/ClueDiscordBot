@@ -10,6 +10,7 @@ import {
   getResult,
   startGame,
   joinGame,
+  addBot,
   leaveGame,
   dealCards,
   GAME_STATE,
@@ -30,7 +31,7 @@ let PUBLIC_CHANNEL;
  */
 app.post('/interactions', verifyKeyMiddleware(process.env.PUBLIC_KEY), async function (req, res) {
   // Interaction type and data
-  const { type, member, user, channel_id, data } = req.body;
+  const { type, member, user, channel_id, data} = req.body;
 
   /**
    * Handle verification requests
@@ -138,6 +139,26 @@ app.post('/interactions', verifyKeyMiddleware(process.env.PUBLIC_KEY), async fun
           type: InteractionResponseType.CHANNEL_MESSAGE_WITH_SOURCE,
           data: {
             content: `You can't leave game!`,
+          },
+        });
+      }
+    }
+    // bot command
+    if(name === "bot"){
+      if(GAME_STATE == 1){
+        addBot();
+        return res.send({
+          type: InteractionResponseType.CHANNEL_MESSAGE_WITH_SOURCE,
+          data: {
+            content: `${Bot.user.username} joined the game!`,
+          },
+        });
+      } else {
+        // Send a message into the channel where command was triggered from to notify there is no game
+        return res.send({
+          type: InteractionResponseType.CHANNEL_MESSAGE_WITH_SOURCE,
+          data: {
+            content: `There is no joinable game!`,
           },
         });
       }

@@ -64,6 +64,14 @@ const DEAL_COMMAND = {
   contexts: [0],
 };
 
+const BOT_COMMAND = {
+  name: 'bot',
+  description: 'Add a bot to the game',
+  type: 1,
+  integration_types: [0],
+  contexts: [0],
+}
+
 // Guess the answer
 const GUESS_COMMAND = {
   name: 'guess',

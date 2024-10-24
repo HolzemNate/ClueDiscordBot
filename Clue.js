@@ -100,12 +100,34 @@ export function joinGame(user) {
   // Check if player already joined
   if (playerList){
     if (playerList.includes(user)) {
-    return false
+    return false;
   }
   }
   // Add the player
   playerList.push(user);
-  return true
+  return true;
+}
+
+//adds bot
+export function addBot(){
+  let BotNames = ["Frank","Scrooge","Mack","Serena"];
+  let BotName = BotNames[Math.floor(Math.random() * (4 - 0) + 0)]
+  if(playerList){
+    if(playerList.includes(BotName)){
+      return false;
+    }
+  }
+  playerList.push(BotName);
+  return true;
+}
+
+export function removeBot(BotName){
+  if (playerList.includes(BotName)) {
+    //If so, remove the player
+    playerList = playerList.filter((item) => item !== BotName)
+    return true
+  }
+  return false
 }
 
 // Invoked on usage of the "leave" command
